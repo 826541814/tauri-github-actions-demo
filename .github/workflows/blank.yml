@@ -6,10 +6,10 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    tags: 
+    tags:
       - "v*"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,6 +18,9 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    defaults:
+      run:
+        working-directory: tauri-app
     strategy:
       fail-fast: false
       matrix:
@@ -26,7 +29,7 @@ jobs:
           - platform: windows-latest
     # The type of runner that the job will run on
     runs-on: ${{ matrix.platform }}
-    permissions: 
+    permissions:
       contents: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -49,9 +52,8 @@ jobs:
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
-        
+
       - name: Install Frontend Dependencies
-        working-directory: tauri-app
         run: yarn install --frozen-lockfile
 
       - name: Build Tauri App
@@ -60,7 +62,6 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          projectPath: tauri-app
           tagName: ${{ github.ref_name }}
           releaseName: "Release ${{ github.ref_name }}"
           releaseBody: "Automatic release"
