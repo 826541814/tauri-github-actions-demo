@@ -29,6 +29,7 @@ jobs:
           - platform: windows-latest
     # The type of runner that the job will run on
     runs-on: ${{ matrix.platform }}
+    environment: KEYS
     permissions:
       contents: write
       id-token: write
@@ -57,7 +58,7 @@ jobs:
 
       - name: Install Frontend Dependencies
         run: yarn install --frozen-lockfile
-        
+
       - name: Check Secrets Length
         run: |
           echo "=== Secrets Length Check ==="
@@ -83,18 +84,18 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
           # Tauri updater
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-      
+
           # Apple code signing + notarization
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-      
+
         with:
           projectPath: tauri-app
           tagName: ${{ github.ref_name }}
